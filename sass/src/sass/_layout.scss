@@ -1,0 +1,12 @@
+body {
+	background: $brand-cyan;
+}
+
+
+@include breakpoint(tablet) {
+	background: $brand-red;
+};
+
+@include breakpoint(desktop) {
+	background: $brand-cyan;
+};

@@ -1,0 +1,1 @@
+{"version":3,"sources":["main.js"],"names":[],"mappings":"AAAA;AACA;AACA;AACA;AACA","file":"main.js","sourcesContent":["jQuery(function($){\n\n\talert(\"Ready!\");\n\n}(jQuery));"],"sourceRoot":"/source/"}

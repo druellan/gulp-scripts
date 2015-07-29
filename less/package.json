@@ -1,0 +1,21 @@
+{
+  "name": "preprocesspipe",
+  "version": "0.0.2",
+  "description": "",
+  "main": "gulpfile.js",
+  "author": "druellan",
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-autoprefixer": "^2.1.0",
+    "gulp-cache": "^0.2.9",
+    "gulp-concat": "^2.5.2",
+    "gulp-imagemin": "^2.2.1",
+    "gulp-less": "^3.0.1",
+    "gulp-minify-css": "^1.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.2.0",
+    "gulp-util": "^3.0.4",
+    "browser-sync": "^2.6.0",
+    "gulp-sourcemaps": "^1.5.0"
+  }
+}

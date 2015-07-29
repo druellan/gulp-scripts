@@ -1,0 +1,16 @@
+{
+  "name": "preprocesspipe",
+  "version": "0.0.2",
+  "description": "",
+  "main": "gulpfile.js",
+  "author": "druellan",
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-imagemin": "^2.2.1",
+    "gulp-litmus": "0.0.7",
+    "gulp-mail": "0.0.1",
+    "gulp-newer": "^0.5.0",
+    "gulp-premailer": "^0.4.0",
+    "gulp-util": "^3.0.4"
+  }
+}
