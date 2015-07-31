@@ -10,8 +10,9 @@ npm install
 
 ##### Usage
 * `gulp` to run all default tasks
-* `gulp less` to compile the Less source
+* `gulp sass` to compile the Less source
 * `gulp js` to compile the Javascript source
+* `gulp images` to process the images
 * `gulp watch` to watch for changes in the code.
 * `gulp serve` to watch for changes and push them to the broser using Browser-Sync.
 
