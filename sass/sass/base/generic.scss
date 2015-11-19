@@ -1,0 +1,40 @@
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+	background: $background-color;
+	font-family: $font-family-base;
+	color: #000;
+	margin: 0;
+
+	min-width: $body-min-width - $margin-horizontal;
+}
+.content-fixed {
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 15px;
+	padding-right: 15px;
+
+	@include breakpoint-limits;
+
+	@include breakpoint(desktop) {
+		padding-left: $margin-horizontal;
+		padding-right: $margin-horizontal;
+	}
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
+.template {
+	display: none;
+}

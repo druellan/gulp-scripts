@@ -5,6 +5,10 @@ var gutil = require('gulp-util');
 var rename = require('gulp-rename');
 var cache = require('gulp-cache');
 
+// HTML dependencies
+
+var fileinclude = require('gulp-file-include');
+
 // sass/CSS dependencies
 
 var sass = require('gulp-sass');
@@ -15,10 +19,6 @@ var autoprefixer = require('gulp-autoprefixer');
 
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-
-// Img dependencies
-
-var imagemin = require('gulp-imagemin');
 
 // Dev Tools
 
@@ -34,33 +34,45 @@ try {
 
 var compile = {
 	"sass": {
-		src: "./src/sass/style.scss",
-		dest: "./css",
+		src: "./sass/style.scss",
+		dest: "../css",
 		destfilename: "style.css",
-		watch: "./src/sass/**/*"
+		watch: "./sass/**/*"
 	},
 	"js": {
-		src: "./src/js/**/*.js",
-		dest: "./js",
+		src: "./js/**/*.js",
+		dest: "../js",
 		destfilename: "main.js",
-		watch: "./src/js/**/*.js"
+		watch: "./js/**/*.js"
 	},
-	"img": {
-		src: "./src/img/**/*",
-		dest: "./img",
-		watch: "./src/img/**/*"
+	"html": {
+		src: "./html/*.html",
+		dest: "../",
+		watch: "./html/**/*"
 	}
 };
 
 // Watchers
 
-var serveWatch = [ "*.html", "*.php" ];
+var serveWatch = [ "src/*.html", "src/*.php" ];
 
 // Default tasks
 
-gulp.task('default', ['sass', 'js', 'images']);
-gulp.task('watch', ['sass', 'js', 'images', 'watch-task']);
-gulp.task('serve', ['sass', 'js', 'images', 'browsersync', 'watch-task']);
+gulp.task('build', ['html', 'sass', 'js']);
+gulp.task('watch', ['html', 'sass', 'js', 'watch-task']);
+gulp.task('serve', ['html', 'sass', 'js', 'browsersync', 'watch-task']);
+
+// html
+
+gulp.task('html', function() {
+	gulp.src(compile.html.src)
+		.pipe(fileinclude({
+			prefix: '@@',
+			basepath: '@file'
+		}))
+		.pipe(rename({prefix: 'frontdev.'}))
+		.pipe(gulp.dest(compile.html.dest));
+});
 
 // sass
 
@@ -73,17 +85,20 @@ gulp.task('sass', function () {
 		.pipe(sass())
 		.on("error", errorHandler)
 
-		.pipe(autoprefixer('last 3 versions'))
+		.pipe(autoprefixer({
+			browsers: ['last 4 versions'],
+			cascade: false
+        }))
 		.on("error", errorHandler)
 
-//		.pipe(minifyCSS({compatibility: 'ie8'}))
-//		.on("error", errorHandler)
+		.pipe(minifyCSS({compatibility: 'ie8', keepBreaks: true}))
+		.on("error", errorHandler)
 //		.pipe(rename({suffix: '.min'}))
 
 		.pipe(sourcemaps.write("."))
 		.pipe(gulp.dest(compile.sass.dest))
 
-		.pipe(browserSync.stream());
+		.pipe(browserSync.stream()); // TODO: recheck this is the current method for inplace refresh
 });
 
 // Js
@@ -106,25 +121,15 @@ gulp.task('js', function () {
 		.pipe(browserSync.stream());
 });
 
-// Images
-
-gulp.task('images', function() {
-
-  return gulp.src(compile.img.src)
-	.pipe(cache(imagemin({ optimizationLevel: 3, progressive: false, interlaced: false })))
-	.pipe(gulp.dest(compile.img.dest))
-	.pipe(browserSync.reload);
-});
-
 // Watchers
 
 gulp.task('watch-task', function () {
 
+	gulp.watch(compile.html.watch, ['html']);
 	gulp.watch(compile.sass.watch, ['sass']);
 	gulp.watch(compile.js.watch, ['js']);
-	gulp.watch(compile.img.watch, ['images']);
 
-	gulp.watch(serveWatch).on('change', browserSync.reload);
+	gulp.watch(compile.html.dest+"*.html").on('change', browserSync.reload);
 
 });
 

@@ -28,6 +28,9 @@
 	}
 }
 
+
+// Styling  -- 8< -- -- -- --
+
 // Center-align a block level element
 @mixin center-block() {
 	display: block;
@@ -35,18 +38,27 @@
 	margin-right: auto;
 }
 
-// Text overflow
-//
+// center vertically
+@mixin vertical-align() {
+	position: relative;
+	display: block;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+
 // Requires inline-block or block for proper styling
+
 @mixin text-truncate() {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-// Retina images
-//
+
+// Retina images -- 8< -- -- -- --
 // Retina background-image support with non-retina fall back
+
 @mixin retina-image($file-1x, $file-2x, $width-1x, $height-1x) {
 	background-image: url('$file-1x');
 
@@ -62,21 +74,34 @@
 	}
 }
 
-// Quick media queries
+// Quick media queries -- 8< -- -- -- --
 
 @mixin breakpoint($bp) {
 
-	@if $bp == mobile-only {
-		@media (min-width: #{$bp-phone-min}) and (max-width: #{$bp-tablet-min - 1px}) {
+	@if $bp == tablet {
+		@media (min-width: #{$bp-tablet-min}) {
 			@content;
 		}
-	} @elseif $bp == tablet-only {
-		@media (min-width: #{$bp-tablet-min}) and (max-width: #{$bp-desktop-min - 1px}) {
-			@content;
-		}
-	} @elseif $bp == desktop-only {
+	} @elseif $bp == desktop {
 		@media (min-width: #{$bp-desktop-min}) {
 			@content;
 		}
+	} @elseif $bp == desktop-wide {
+		@media (min-width: #{$bp-desktop-wide-min}) {
+			@content;
+		}
+	}
+}
+
+@mixin breakpoint-limits {
+	max-width: $body-max-width;
+	min-width: $body-min-width - $margin-horizontal;
+}
+
+@mixin breakpoint-paddings {
+	padding: $grid-padding;
+
+	@include breakpoint(desktop) {
+		padding: $grid-gutter;
 	}
 }

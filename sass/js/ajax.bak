@@ -1,0 +1,34 @@
+// Ajax functions
+// @author Dario Ruellan <druellan@sfidastudios.com>
+
+
+function dibox_ajax (options) {
+
+	var that = this;
+	var globalOptions = {
+		method: 'GET',
+		crossDomain: false,
+		dataType: 'json',
+		error: function() {
+			showMessage("Se produjo un error en la página, relacionado con la transmisión de datos. Puede ser un problema temporal: espera unos segundos, recarga la página y prueba nuevamente.")
+			},
+		success: function(data) {
+			showMessage("AJAX done!");
+			console.debug(data, "dibox_ajax");
+		}
+		ifModified: false,
+
+	};
+
+	$.extend( globalOptions, options );
+
+	// Public functions
+
+	this.getJSON = function (url, callback) {
+
+	};
+
+	function showMessage (message) {
+		alert(message);
+	}
+}

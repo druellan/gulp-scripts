@@ -17,6 +17,7 @@ $RECYCLE.BIN/
 
 *.sublime-workspace
 *.sublime-project
+
 #sftp/ftp plugin scary things!
 sftp-config.json
 ftpsync.settings
@@ -33,6 +34,8 @@ deployment-config.json
 ## Visual Studio Code
 
 .settings/
+.vscode/
+typings
 
 ## Gulp/Grunt
 
