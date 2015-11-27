@@ -1,27 +1,23 @@
 // Main dependencies
-
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var rename = require('gulp-rename');
-var cache = require('gulp-cache');
 
 // HTML dependencies
-
 var fileinclude = require('gulp-file-include');
 
 // sass/CSS dependencies
-
 var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
 var autoprefixer = require('gulp-autoprefixer');
 
 // JS dependencies
-
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 
-// Dev Tools
+// SVG dependencies
 
+// Dev Tools
 var sourcemaps = require('gulp-sourcemaps');
 var browserSync = require('browser-sync');
 var browserSyncConfig = false;
@@ -32,22 +28,23 @@ try {
 
 // Options for compilation/concatenation/parsing
 
+var buildFolder = "./build";
 var compile = {
 	"sass": {
 		src: "./sass/style.scss",
-		dest: "../css",
+		dest: buildFolder+"/css",
 		destfilename: "style.css",
 		watch: "./sass/**/*"
 	},
 	"js": {
 		src: "./js/**/*.js",
-		dest: "../js",
+		dest: buildFolder+"/js",
 		destfilename: "main.js",
 		watch: "./js/**/*.js"
 	},
 	"html": {
 		src: "./html/*.html",
-		dest: "../",
+		dest: buildFolder+"/",
 		watch: "./html/**/*"
 	}
 };
@@ -61,6 +58,15 @@ var serveWatch = [ "src/*.html", "src/*.php" ];
 gulp.task('build', ['html', 'sass', 'js']);
 gulp.task('watch', ['html', 'sass', 'js', 'watch-task']);
 gulp.task('serve', ['html', 'sass', 'js', 'browsersync', 'watch-task']);
+
+gulp.task('default', function(){
+	gutil.log("Use ", "[gulp build] to build the project.");
+	gutil.log("Use ", "[gulp html] to compile the HTML template [watcheable].");
+	gutil.log("Use ", "[gulp css] to compile the SASS CSS [watcheable].");
+	gutil.log("Use ", "[gulp js] to compile the JS functions [watcheable].");
+	gutil.log("Use ", "[gulp svg] to compile the SVG spriters.");
+	gutil.log("Use ", "[gulp serve] to build, watch and start the Browsersync server.");
+});
 
 // html
 
