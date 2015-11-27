@@ -7,7 +7,7 @@ var rename = require('gulp-rename');
 var fileinclude = require('gulp-file-include');
 
 // sass/CSS dependencies
-var sass = require('gulp-sass');
+var sass = require('gulp-sass-newer');
 var minifyCSS = require('gulp-minify-css');
 var autoprefixer = require('gulp-autoprefixer');
 
@@ -61,10 +61,12 @@ gulp.task('serve', ['html', 'sass', 'js', 'browsersync', 'watch-task']);
 
 gulp.task('default', function(){
 	gutil.log("Use ", "[gulp build] to build the project.");
-	gutil.log("Use ", "[gulp html] to compile the HTML template [watcheable].");
 	gutil.log("Use ", "[gulp css] to compile the SASS CSS [watcheable].");
 	gutil.log("Use ", "[gulp js] to compile the JS functions [watcheable].");
+
+	gutil.log("Use ", "[gulp html] to compile the HTML template [watcheable].");
 	gutil.log("Use ", "[gulp svg] to compile the SVG spriters.");
+	
 	gutil.log("Use ", "[gulp serve] to build, watch and start the Browsersync server.");
 });
 
