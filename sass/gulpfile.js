@@ -1,13 +1,12 @@
 // Main dependencies
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var rename = require('gulp-rename');
 
 // HTML dependencies
 var fileinclude = require('gulp-file-include');
 
 // sass/CSS dependencies
-var sass = require('gulp-sass-newer');
+var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
 var autoprefixer = require('gulp-autoprefixer');
 
@@ -66,7 +65,7 @@ gulp.task('default', function(){
 
 	gutil.log("Use ", "[gulp html] to compile the HTML template [watcheable].");
 	gutil.log("Use ", "[gulp svg] to compile the SVG spriters.");
-	
+
 	gutil.log("Use ", "[gulp serve] to build, watch and start the Browsersync server.");
 });
 
@@ -101,7 +100,6 @@ gulp.task('sass', function () {
 
 		.pipe(minifyCSS({compatibility: 'ie8', keepBreaks: true}))
 		.on("error", errorHandler)
-//		.pipe(rename({suffix: '.min'}))
 
 		.pipe(sourcemaps.write("."))
 		.pipe(gulp.dest(compile.sass.dest))
@@ -121,7 +119,6 @@ gulp.task('js', function () {
 
 //		.pipe(uglify())
 //		.on("error", errorHandler)
-//		.pipe(rename({suffix: '.min'}))
 
 		.pipe(sourcemaps.write("."))
 		.pipe(gulp.dest(compile.js.dest))
