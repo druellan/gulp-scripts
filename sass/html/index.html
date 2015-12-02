@@ -1,6 +1,25 @@
 @@include('./partials/head.html')
+<style>
 
+	.hover {
+		color: blue;
+	}.hover:hover {
+		color: red;
+	}
+	.icon {
+		fill: currentColor;
+		width: 20px;
+		height: 20px;
+	}
+
+</style>
 	<main>
+		<a href="" class="hover">
+			<svg class="icon">
+  				<use xlink:href="symbol/svg/sprite.symbol.svg#chevron-small-down" />
+			</svg> icon
+		</a>
+
 	</main>
 
 @@include('./partials/foot.html')
