@@ -1,6 +1,7 @@
 // Main dependencies
 var gulp = require('gulp');
 var gutil = require('gulp-util');
+var rename = require('gulp-rename');
 
 // HTML dependencies
 var fileinclude = require('gulp-file-include');
@@ -15,6 +16,7 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 
 // SVG dependencies
+var svgSprite = require('gulp-svg-sprite');
 
 // Dev Tools
 var sourcemaps = require('gulp-sourcemaps');
@@ -28,23 +30,33 @@ try {
 // Options for compilation/concatenation/parsing
 
 var buildFolder = "./build";
-var compile = {
-	"sass": {
-		src: "./sass/style.scss",
-		dest: buildFolder+"/css",
-		destfilename: "style.css",
-		watch: "./sass/**/*"
-	},
-	"js": {
-		src: "./js/**/*.js",
-		dest: buildFolder+"/js",
-		destfilename: "main.js",
-		watch: "./js/**/*.js"
-	},
-	"html": {
-		src: "./html/*.html",
-		dest: buildFolder+"/",
-		watch: "./html/**/*"
+var sassSettings = {
+	src: "./sass/style.scss",
+	dest: buildFolder+"/css",
+	destfilename: "style.css",
+	watch: "./sass/**/*",
+	config: { compatibility: 'ie8', keepBreaks: true }
+};
+var jsSettings = {
+	src: "./js/**/*.js",
+	dest: buildFolder+"/js",
+	destfilename: "main.js",
+	watch: "./js/**/*.js"
+};
+var htmlSettings = {
+	src: "./html/*.html",
+	dest: buildFolder+"/",
+	watch: "./html/**/*"
+};
+var svgSettings = {
+	src: "./svg/*.svg",
+	dest: buildFolder,
+    config: {
+	    mode                : {
+	        symbol          : {
+				sprite			: 'sprites.svg'
+			}
+	    }
 	}
 };
 
@@ -54,9 +66,9 @@ var serveWatch = [ "src/*.html", "src/*.php" ];
 
 // Default tasks
 
-gulp.task('build', ['html', 'sass', 'js']);
-gulp.task('watch', ['html', 'sass', 'js', 'watch-task']);
-gulp.task('serve', ['html', 'sass', 'js', 'browsersync', 'watch-task']);
+gulp.task('build', ['html', 'sass', 'js', 'svg']);
+gulp.task('watch', ['html', 'sass', 'js', 'svg', 'watch-task']);
+gulp.task('serve', ['html', 'sass', 'js', 'svg', 'browsersync', 'watch-task']);
 
 gulp.task('default', function(){
 	gutil.log("Use ", "[gulp build] to build the project.");
@@ -72,21 +84,21 @@ gulp.task('default', function(){
 // html
 
 gulp.task('html', function() {
-	gulp.src(compile.html.src)
+	gulp.src(htmlSettings.src)
 		.pipe(fileinclude({
 			prefix: '@@',
 			basepath: '@file'
 		}))
 		.pipe(rename({prefix: 'frontdev.'}))
-		.pipe(gulp.dest(compile.html.dest));
+		.pipe(gulp.dest(htmlSettings.dest));
 });
 
 // sass
 
 gulp.task('sass', function () {
 
-	return gulp.src(compile.sass.src)
-		.pipe(rename(compile.sass.destfilename))
+	return gulp.src(sassSettings.src)
+		.pipe(rename(sassSettings.destfilename))
 		.pipe(sourcemaps.init())
 
 		.pipe(sass())
@@ -98,11 +110,11 @@ gulp.task('sass', function () {
         }))
 		.on("error", errorHandler)
 
-		.pipe(minifyCSS({compatibility: 'ie8', keepBreaks: true}))
+		.pipe(minifyCSS(sassSettings.config))
 		.on("error", errorHandler)
 
 		.pipe(sourcemaps.write("."))
-		.pipe(gulp.dest(compile.sass.dest))
+		.pipe(gulp.dest(sassSettings.dest))
 
 		.pipe(browserSync.stream()); // TODO: recheck this is the current method for inplace refresh
 });
@@ -111,30 +123,37 @@ gulp.task('sass', function () {
 
 gulp.task('js', function () {
 
-	return gulp.src(compile.js.src)
+	return gulp.src(jsSettings.src)
 		.pipe(sourcemaps.init())
 
-		.pipe(concat(compile.js.destfilename))
+		.pipe(concat(jsSettings.destfilename))
 		.on("error", errorHandler)
 
 //		.pipe(uglify())
 //		.on("error", errorHandler)
 
 		.pipe(sourcemaps.write("."))
-		.pipe(gulp.dest(compile.js.dest))
+		.pipe(gulp.dest(jsSettings.dest))
 
 		.pipe(browserSync.stream());
+});
+
+// SVG
+gulp.task('svg', function() {
+	return gulp.src(svgSettings.src)
+		.pipe(svgSprite(svgSettings.config))
+		.pipe(gulp.dest(svgSettings.dest));
 });
 
 // Watchers
 
 gulp.task('watch-task', function () {
 
-	gulp.watch(compile.html.watch, ['html']);
-	gulp.watch(compile.sass.watch, ['sass']);
-	gulp.watch(compile.js.watch, ['js']);
+	gulp.watch(htmlSettings.watch, ['html']);
+	gulp.watch(sassSettings.watch, ['sass']);
+	gulp.watch(jsSettings.watch, ['js']);
 
-	gulp.watch(compile.html.dest+"*.html").on('change', browserSync.reload);
+	gulp.watch(htmlSettings.dest+"*.html").on('change', browserSync.reload);
 
 });
 
