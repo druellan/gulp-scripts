@@ -1,0 +1,50 @@
+## Windows detritus
+
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+## Mac crap
+
+.DS_Store
+
+## Linux things
+
+.trash
+
+## Sublime Text
+
+*.sublime-workspace
+*.sublime-project
+
+#sftp/ftp plugin scary things!
+sftp-config.json
+ftpsync.settings
+
+## Atom.io
+
+deployment-config.json
+.remote-sync.json
+
+## Brackets Editor
+
+.brackets.json
+
+## Visual Studio Code
+
+.settings/
+.vscode/
+typings
+
+## Gulp/Grunt
+
+node_modules
+
+## Bower
+
+bower_components
+
+## Browser Sync
+
+bs-config.js

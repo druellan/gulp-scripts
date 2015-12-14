@@ -1,0 +1,14 @@
+{
+  "name": "sfida-ftp-deploy",
+  "version": "0.0.1",
+  "description": "",
+  "main": "gulpfile.js",
+  "author": "Luciano Mammino, Dario Ruellan",
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-util": "^3.0.7",
+    "vinyl-ftp": "^0.4.5"
+  },
+  "repository": {}
+}
