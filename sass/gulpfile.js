@@ -116,7 +116,7 @@ gulp.task('sass', function () {
 		.pipe(sourcemaps.write("."))
 		.pipe(gulp.dest(sassSettings.dest))
 
-		.pipe(browserSync.stream()); // TODO: recheck this is the current method for inplace refresh
+		.pipe(browserSync.stream({match: '**/*.css'}));
 });
 
 // Js

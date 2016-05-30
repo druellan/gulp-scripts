@@ -76,8 +76,9 @@ gulp.task('html', function() {
 			prefix: '@@',
 			basepath: '@file'
 		}))
-		.pipe(rename({prefix: 'frontdev.'}))
-		.pipe(gulp.dest(htmlSettings.dest));
+		.pipe(gulp.dest(htmlSettings.dest))
+			
+		.pipe(browserSync.stream());
 });
 
 // css
@@ -101,7 +102,7 @@ gulp.task('css', function () {
 		.pipe(gulp.dest(cssSettings.dest))
 		.pipe(rename(cssSettings.destfilename))
 
-		.pipe(browserSync.stream()); // TODO: recheck this is the current method for inplace refresh
+		.pipe(browserSync.stream({match: '**/*.css'}));
 });
 
 // Js
@@ -123,22 +124,13 @@ gulp.task('js', function () {
 		.pipe(browserSync.stream());
 });
 
-// SVG
-gulp.task('svg', function() {
-	return gulp.src(svgSettings.src)
-		.pipe(svgSprite(svgSettings.config))
-		.pipe(gulp.dest(svgSettings.dest));
-});
-
 // Watchers
 
 gulp.task('watch-task', function () {
 
-	gulp.watch(htmlSettings.watch, ['html']);
+	gulp.watch(htmlSettings.watch, ['html']).on('change', browserSync.reload);
 	gulp.watch(cssSettings.watch, ['css']);
-	gulp.watch(jsSettings.watch, ['js']);
-
-	gulp.watch(htmlSettings.dest+"*.html").on('change', browserSync.reload);
+	gulp.watch(jsSettings.watch, ['js']).on('change', browserSync.reload);
 
 });
 

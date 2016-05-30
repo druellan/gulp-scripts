@@ -5,7 +5,7 @@ Sfida Project
 A gulp.js config file is included on the root folder, to help build the project.
 
 ##### To install Gulp:
-[node.js]{http://nodejs.org/} is required. Once you have node.js installed, install `gulp` globally:
+[node.js](http://nodejs.org/) is required. Once you have node.js installed, install `gulp` globally:
 ```
 npm install gulp --global
 ```

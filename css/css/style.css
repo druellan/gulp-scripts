@@ -1,4 +1,20 @@
-/* Main Style sheet */
+/* MAIN Style sheet */
 /* @author Sfida Studios <druellan@sfidastudios.com> */
 
-@import "normalize.css";
+/*
+
+COLORS
+Gray: #123543
+Gray Light: #e2edf5;
+Cyan: #9ed1e4
+Green: #009c44
+
+ */
+
+@import "bootstrap-theme.css";
+@import "base.css";
+@import "header.css";
+
+@import "index.css";
+
+@import "footer.css";
