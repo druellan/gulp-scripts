@@ -26,30 +26,32 @@ try {
 
 // Options for compilation/concatenation/parsing
 
-var buildFolder = "./build";
+var buildFolder = "./public";
+var appFolder = "./source";
+var productionBuild = gutil.env.production;
 
 var cssSettings = {
-	src: "./css/style.css",
+	src: appFolder+"/css/style.css",
 	dest: buildFolder+"/css",
 	destfilename: "style.min.css",
-	watch: "./css/**/*",
+	watch: appFolder+"/css/**/*",
 	config: { 
-		keepBreaks: false, 
-		keepSpecialComments: "*", 
+		keepBreaks: !productionBuild, 
+		keepSpecialComments: 1, 
 		processImport: true,
-		relativeTo: "./css",
+		relativeTo: appFolder+"/css",
 		rebase: false }
 };
 var jsSettings = {
-	src: "./js/**/*.js",
+	src: appFolder+"/js/**/*.js",
 	dest: buildFolder+"/js",
 	destfilename: "main.js",
-	watch: "./js/**/*.js"
+	watch: appFolder+"/js/**/*.js"
 };
 var htmlSettings = {
-	src: "./html/*.html",
+	src: appFolder+"/html/*.html",
 	dest: buildFolder+"/",
-	watch: "./html/**/*"
+	watch: appFolder+"/html/**/*"
 };
 
 // Default tasks
@@ -115,7 +117,7 @@ gulp.task('js', function () {
 		.pipe(concat(jsSettings.destfilename))
 		.on("error", errorHandler)
 
-		.pipe(uglify())
+		.pipe(productionBuild ? uglify() : gutil.noop())
 		.on("error", errorHandler)
 
 		.pipe(sourcemaps.write("."))
