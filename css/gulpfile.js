@@ -26,8 +26,8 @@ try {
 
 // Options for compilation/concatenation/parsing
 
-var buildFolder = "./public";
-var appFolder = "./source";
+var buildFolder = "./static";
+var appFolder = "./src";
 var productionBuild = gutil.env.production;
 
 var cssSettings = {
