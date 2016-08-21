@@ -30,29 +30,19 @@ var buildFolder = "./static";
 var appFolder = "./src";
 var productionBuild = gutil.env.production;
 
-var cssSettings = {
-	src: appFolder+"/css/style.css",
-	dest: buildFolder+"/css",
-	destfilename: "style.min.css",
-	watch: appFolder+"/css/**/*",
-	config: { 
+var autoprefixerConfig = {
+	browsers: ['last 4 versions'],
+	cascade: false
+}
+
+var mincssConfig = { 
 		keepBreaks: !productionBuild, 
 		keepSpecialComments: 1, 
 		processImport: true,
 		relativeTo: appFolder+"/css",
 		rebase: false }
 };
-var jsSettings = {
-	src: appFolder+"/js/**/*.js",
-	dest: buildFolder+"/js",
-	destfilename: "main.js",
-	watch: appFolder+"/js/**/*.js"
-};
-var htmlSettings = {
-	src: appFolder+"/html/*.html",
-	dest: buildFolder+"/",
-	watch: appFolder+"/html/**/*"
-};
+
 
 // Default tasks
 
@@ -73,12 +63,12 @@ gulp.task('default', function(){
 // html
 
 gulp.task('html', function() {
-	gulp.src(htmlSettings.src)
+	gulp.src(appFolder+"/html/*.html")
 		.pipe(fileinclude({
 			prefix: '@@',
 			basepath: '@file'
 		}))
-		.pipe(gulp.dest(htmlSettings.dest))
+		.pipe(gulp.dest(buildFolder+"/"))
 			
 		.pipe(browserSync.stream());
 });
@@ -87,22 +77,19 @@ gulp.task('html', function() {
 
 gulp.task('css', function () {
 
-	return gulp.src(cssSettings.src)
+	return gulp.src(appFolder+"/css/style.css")
 		.pipe(sourcemaps.init())
 		.on("error", errorHandler)
 		
-		.pipe(autoprefixer({
-			browsers: ['last 4 versions'],
-			cascade: false
-        }))
+		.pipe(autoprefixer(autoprefixerConfig))
 		.on("error", errorHandler)
 
-		.pipe(minCSS(cssSettings.config))
+		.pipe(minCSS(mincssConfig))
 		.on("error", errorHandler)
 
 		.pipe(sourcemaps.write("."))
-		.pipe(gulp.dest(cssSettings.dest))
-		.pipe(rename(cssSettings.destfilename))
+		.pipe(gulp.dest(buildFolder+"/css"))
+		.pipe(rename("style.min.css"))
 
 		.pipe(browserSync.stream({match: '**/*.css'}));
 });
@@ -111,17 +98,17 @@ gulp.task('css', function () {
 
 gulp.task('js', function () {
 
-	return gulp.src(jsSettings.src)
+	return gulp.src(appFolder+"/js/**/*.js")
 		.pipe(sourcemaps.init())
 
-		.pipe(concat(jsSettings.destfilename))
+		.pipe(concat("main.js"))
 		.on("error", errorHandler)
 
 		.pipe(productionBuild ? uglify() : gutil.noop())
 		.on("error", errorHandler)
 
 		.pipe(sourcemaps.write("."))
-		.pipe(gulp.dest(jsSettings.dest))
+		.pipe(gulp.dest(buildFolder+"/js"))
 
 		.pipe(browserSync.stream());
 });
@@ -130,9 +117,9 @@ gulp.task('js', function () {
 
 gulp.task('watch-task', function () {
 
-	gulp.watch(htmlSettings.watch, ['html']).on('change', browserSync.reload);
-	gulp.watch(cssSettings.watch, ['css']);
-	gulp.watch(jsSettings.watch, ['js']).on('change', browserSync.reload);
+	gulp.watch(appFolder+"/html/**/*", ['html']).on('change', browserSync.reload);
+	gulp.watch(appFolder+"/css/**/*.css", ['css']);
+	gulp.watch(appFolder+"/js/**/*.js", ['js']).on('change', browserSync.reload);
 
 });
 
