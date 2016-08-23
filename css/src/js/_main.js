@@ -12,8 +12,8 @@ if(!DEBUG){
     }
 }
 
-$(function(){
+(function($){
 
 	// Starting tasks here --
 
-});
+})(jQuery);

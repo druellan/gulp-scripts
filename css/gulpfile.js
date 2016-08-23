@@ -27,20 +27,20 @@ try {
 // Options for compilation/concatenation/parsing
 
 var buildFolder = "./static";
-var appFolder = "./src";
+var sourceFolder = "./src";
 var productionBuild = gutil.env.production;
 
 var autoprefixerConfig = {
-	browsers: ['last 4 versions'],
+	browsers: [ "last 4 versions", "ie >= 9", "> 5%" ],
 	cascade: false
 }
 
 var mincssConfig = { 
-		keepBreaks: !productionBuild, 
-		keepSpecialComments: 1, 
-		processImport: true,
-		relativeTo: appFolder+"/css",
-		rebase: false }
+	keepBreaks: !productionBuild, 
+	keepSpecialComments: 1, 
+	processImport: true,
+	relativeTo: sourceFolder+"/css",
+	rebase: false
 };
 
 
@@ -58,12 +58,13 @@ gulp.task('default', function(){
 	gutil.log("Use ", "[gulp html] to compile the HTML template [watcheable].");
 
 	gutil.log("Use ", "[gulp serve] to build, watch and start the Browsersync server.");
+	gutil.log("Use ", "[gulp --production] flag to minimize and further optimize the output.");
 });
 
 // html
 
 gulp.task('html', function() {
-	gulp.src(appFolder+"/html/*.html")
+	gulp.src(sourceFolder+"/html/*.html")
 		.pipe(fileinclude({
 			prefix: '@@',
 			basepath: '@file'
@@ -77,7 +78,7 @@ gulp.task('html', function() {
 
 gulp.task('css', function () {
 
-	return gulp.src(appFolder+"/css/style.css")
+	return gulp.src(sourceFolder+"/css/style.css")
 		.pipe(sourcemaps.init())
 		.on("error", errorHandler)
 		
@@ -98,7 +99,7 @@ gulp.task('css', function () {
 
 gulp.task('js', function () {
 
-	return gulp.src(appFolder+"/js/**/*.js")
+	return gulp.src(sourceFolder+"/js/**/*.js")
 		.pipe(sourcemaps.init())
 
 		.pipe(concat("main.js"))
@@ -117,9 +118,9 @@ gulp.task('js', function () {
 
 gulp.task('watch-task', function () {
 
-	gulp.watch(appFolder+"/html/**/*", ['html']).on('change', browserSync.reload);
-	gulp.watch(appFolder+"/css/**/*.css", ['css']);
-	gulp.watch(appFolder+"/js/**/*.js", ['js']).on('change', browserSync.reload);
+	gulp.watch(sourceFolder+"/html/**/*", ['html']).on('change', browserSync.reload);
+	gulp.watch(sourceFolder+"/css/**/*.css", ['css']);
+	gulp.watch(sourceFolder+"/js/**/*.js", ['js']).on('change', browserSync.reload);
 
 });
 
