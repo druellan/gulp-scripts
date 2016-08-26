@@ -1,15 +1,23 @@
+var doCss = true;
+var doJs = true;
+var doHtml = true;
+var doDeploy = false;
+var doAutodeploy = false;
+
 // Main dependencies
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var rename = require('gulp-rename');
 
-// HTML dependencies
-var fileinclude = require('gulp-file-include');
+// FTP
+var sftp = require('gulp-sftp');
 
 // CSS dependencies
-var concatCSS = require('gulp-concat');
-var minCSS = require('gulp-cssmin');
+var cleanCSS = require('gulp-clean-css');
 var autoprefixer = require('gulp-autoprefixer');
+
+// HTML dependencies
+var fileinclude = require('gulp-file-include');
 
 // JS dependencies
 var concat = require('gulp-concat');
@@ -21,76 +29,80 @@ var browserSync = require('browser-sync');
 var browserSyncConfig = false;
 try {
 	browserSyncConfig = require('./bs-config.js');
-} catch(e){};
+} catch(e){}
 
 
 // Options for compilation/concatenation/parsing
 
-var buildFolder = "./static";
-var sourceFolder = "./src";
+var buildFolder     = "./static";
+var sourceFolder    = "./src";
 var productionBuild = gutil.env.production;
 
 var autoprefixerConfig = {
 	browsers: [ "last 4 versions", "ie >= 9", "> 5%" ],
 	cascade: false
-}
+};
 
-var mincssConfig = { 
-	keepBreaks: !productionBuild, 
-	keepSpecialComments: 1, 
+var cleancssConfig = {
+	keepBreaks: !productionBuild,
+	keepSpecialComments: true,
 	processImport: true,
 	relativeTo: sourceFolder+"/css",
 	rebase: false
 };
 
+if ( doDeploy ) {
+	var config = require('./sftp-config.json');
+	var watchSrc = [buildFolder+'/**/*.{css,js,gif,png,php,eot,svg,ttf,woff}', '!'+buildFolder+'/src/**/*'];
+
+	var sftpConfig = {
+		host: config.host,
+		port: config.port,
+		user: config.user,
+		pass: config.password,
+		remotePath: config.remote_path + "/"+buildFolder,
+		timeout: 30000,
+		log: gutil.log
+	};
+}
 
 // Default tasks
 
-gulp.task('build', ['html', 'css', 'js']);
-gulp.task('watch', ['html', 'css', 'js', 'watch-task']);
-gulp.task('serve', ['html', 'css', 'js', 'browsersync', 'watch-task']);
+gulp.task('build', ['hrml', 'css', 'js']);
+gulp.task('watch', ['hrml', 'css', 'js', 'watch-task']);
+gulp.task('serve', ['hrml', 'css', 'js', 'browsersync', 'watch-task']);
 
 gulp.task('default', function(){
 	gutil.log("Use ", "[gulp build] to build the project.");
-	gutil.log("Use ", "[gulp css] to compile the CSS [watcheable].");
-	gutil.log("Use ", "[gulp js] to compile the JS functions [watcheable].");
 
-	gutil.log("Use ", "[gulp html] to compile the HTML template [watcheable].");
+	if (doCss) gutil.log("Use ", "[gulp css] to compile the CSS [watcheable].");
+	if (doJs) gutil.log("Use ", "[gulp js] to compile the JS functions [watcheable].");
+	if (doHtml) gutil.log("Use ", "[gulp html] to compile the HTML template [watcheable].");
 
-	gutil.log("Use ", "[gulp serve] to build, watch and start the Browsersync server.");
+	if (doDeploy) gutil.log("Use ", "[gulp deploy] to upload the static code.");
+
+	gutil.log("Use ", "[gulp serve] to build, watch, [deploy] and start the Browsersync server.");
 	gutil.log("Use ", "[gulp --production] flag to minimize and further optimize the output.");
-});
-
-// html
-
-gulp.task('html', function() {
-	gulp.src(sourceFolder+"/html/*.html")
-		.pipe(fileinclude({
-			prefix: '@@',
-			basepath: '@file'
-		}))
-		.pipe(gulp.dest(buildFolder+"/"))
-			
-		.pipe(browserSync.stream());
 });
 
 // css
 
 gulp.task('css', function () {
 
-	return gulp.src(sourceFolder+"/css/style.css")
+	if ( doCss )
+		return gulp.src(sourceFolder+"/css/style.css")
 		.pipe(sourcemaps.init())
 		.on("error", errorHandler)
-		
+
 		.pipe(autoprefixer(autoprefixerConfig))
 		.on("error", errorHandler)
 
-		.pipe(minCSS(mincssConfig))
+		.pipe(cleanCSS(cleancssConfig))
 		.on("error", errorHandler)
 
 		.pipe(sourcemaps.write("."))
 		.pipe(gulp.dest(buildFolder+"/css"))
-		.pipe(rename("style.min.css"))
+		.pipe(rename("style.css"))
 
 		.pipe(browserSync.stream({match: '**/*.css'}));
 });
@@ -99,7 +111,8 @@ gulp.task('css', function () {
 
 gulp.task('js', function () {
 
-	return gulp.src(sourceFolder+"/js/**/*.js")
+	if ( doJs )
+		return gulp.src(sourceFolder+"/js/**/*.js")
 		.pipe(sourcemaps.init())
 
 		.pipe(concat("main.js"))
@@ -114,13 +127,44 @@ gulp.task('js', function () {
 		.pipe(browserSync.stream());
 });
 
+// html
+
+gulp.task('html', function() {
+
+	if ( doHtml )
+		return gulp.src(sourceFolder+"/html/*.html")
+		.pipe(fileinclude({
+			prefix: '@@',
+			basepath: '@file'
+		}))
+		.pipe(gulp.dest(buildFolder))
+
+		.pipe(browserSync.stream());
+});
+
+// Deploy
+
+gulp.task('deploy', function() {
+
+	if ( doDeploy )
+		return gulp.src(watchSrc)
+		.pipe(sftp(sftpConfig))
+		.on("error", errorHandler);
+});
+
 // Watchers
 
 gulp.task('watch-task', function () {
 
-	gulp.watch(sourceFolder+"/html/**/*", ['html']).on('change', browserSync.reload);
 	gulp.watch(sourceFolder+"/css/**/*.css", ['css']);
-	gulp.watch(sourceFolder+"/js/**/*.js", ['js']).on('change', browserSync.reload);
+	gulp.watch(sourceFolder+"/js/**/*.js", ['js']);
+
+	if ( doAutodeploy )
+		gulp.watch(watchSrc, { ignoreInitial: true }, function(file) {
+			gulp.src(file.path, { buffer:false })
+			.pipe(sftp(sftpConfig))
+			.on("error", errorHandler);
+		} );
 
 });
 
