@@ -7,8 +7,7 @@ var rename = require('gulp-rename');
 var fileinclude = require('gulp-file-include');
 
 // CSS dependencies
-var concatCSS = require('gulp-concat');
-var minCSS = require('gulp-cssmin');
+var cleanCSS = require('gulp-clean-css');
 var autoprefixer = require('gulp-autoprefixer');
 
 // JS dependencies
@@ -35,9 +34,9 @@ var autoprefixerConfig = {
 	cascade: false
 }
 
-var mincssConfig = { 
+var cleancssConfig = { 
 	keepBreaks: !productionBuild, 
-	keepSpecialComments: 1, 
+	keepSpecialComments: true, 
 	processImport: true,
 	relativeTo: sourceFolder+"/css",
 	rebase: false
@@ -85,7 +84,7 @@ gulp.task('css', function () {
 		.pipe(autoprefixer(autoprefixerConfig))
 		.on("error", errorHandler)
 
-		.pipe(minCSS(mincssConfig))
+		.pipe(cleanCSS(cleancssConfig))
 		.on("error", errorHandler)
 
 		.pipe(sourcemaps.write("."))
